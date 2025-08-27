@@ -40,3 +40,75 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Chat styles */
+.chat-wrapper {
+  margin: 2rem auto;
+  text-align: left;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.chat-meta { font-size: 0.75rem; color: #666; display: flex; gap: 1rem; flex-wrap: wrap; }
+.chat-messages {
+  background: #0f1115;
+  border: 1px solid #222;
+  border-radius: 10px;
+  padding: 0.75rem;
+  height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.chat-placeholder { opacity: 0.5; font-size: 0.9rem; }
+.chat-message { display: flex; }
+.chat-message.role-user { justify-content: flex-end; }
+.chat-message.role-assistant { justify-content: flex-start; }
+.chat-message.role-error { justify-content: center; }
+.chat-bubble {
+  max-width: 80%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 14px;
+  line-height: 1.35;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #1e2633;
+  color: #dce3ec;
+  position: relative;
+}
+.role-user .chat-bubble { background: linear-gradient(135deg,#4f46e5,#6366f1); color: #fff; }
+.role-error .chat-bubble { background: #300; color: #ffb3b3; border: 1px solid #600; }
+.chat-bubble.loading { opacity: 0.6; font-style: italic; }
+.chat-run-status { margin-top: 0.4rem; font-size: 0.65rem; opacity: 0.6; }
+.chat-error-label { margin-top: 0.4rem; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.chat-input-row { display: flex; gap: 0.5rem; }
+.chat-input {
+  flex: 1;
+  resize: none;
+  padding: 0.6rem 0.75rem;
+  background: #0f1115;
+  border: 1px solid #222;
+  border-radius: 10px;
+  color: #e6edf3;
+  font-family: inherit;
+  line-height: 1.3;
+}
+.chat-input:disabled { opacity: 0.5; }
+.chat-send {
+  background: #2563eb;
+  border: 1px solid #1d4ed8;
+  color: #fff;
+  padding: 0 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 120ms;
+}
+.chat-send:disabled { background: #1e293b; border-color: #1e293b; cursor: not-allowed; }
+.chat-send:not(:disabled):hover { background: #1d4ed8; }
+.chat-hint { font-size: 0.65rem; opacity: 0.5; }
+/* (Intentionally minimal; Tailwind utilities used directly in components) */
+
