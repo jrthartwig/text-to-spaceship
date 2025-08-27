@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import CADViewer from './components/CADViewer';
 
 type ChatMessage = {
     id: string;
@@ -123,13 +124,41 @@ const Chat: React.FC<ChatProps> = ({ endpoint }) => {
                     {threadId && <span>Thread: <code className="text-gray-400">{threadId}</code></span>}
                 </div>
             </header>
-            <main className="flex-1 overflow-y-auto px-4 md:px-12 py-6" ref={listRef}>
-                <div className="flex flex-col gap-6">
+            <main className="flex-1 flex overflow-hidden px-4 md:px-8 lg:px-12 py-4 gap-6" ref={listRef}>
+                {/* Left panel: CAD viewer or placeholder */}
+                <div className="hidden md:flex flex-col w-80 lg:w-96 shrink-0 rounded-xl border border-surface2/60 bg-surface2/30 backdrop-blur overflow-hidden">
+                    {(() => {
+                        const hasAssistant = messages.some(m => m.role === 'assistant');
+                        const hasUser = messages.some(m => m.role === 'user');
+                        const showGenerating = hasUser && !hasAssistant;
+                        if (showGenerating) {
+                            return (
+                                <div className="flex-1 flex items-center justify-center text-xs text-gray-400 p-4 animate-pulse">
+                                    Generating specs…
+                                </div>
+                            );
+                        }
+                        if (hasAssistant) {
+                            return (
+                                <div className="flex-1">
+                                    <CADViewer url="/orion_nofbc.stl" />
+                                </div>
+                            );
+                        }
+                        return (
+                            <div className="flex-1 flex items-center justify-center text-[11px] text-gray-500 p-4 text-center">
+                                Upload not required. Ask a question to generate specs and 3D view.
+                            </div>
+                        );
+                    })()}
+                </div>
+                {/* Right panel: messages */}
+                <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-6">
                     {messages.length === 0 && !loading && (
-                        <div className="text-left text-sm text-gray-500 pt-10 pl-1">Start the conversation with a question about NASA, missions, or spacecraft.</div>
+                        <div className="text-sm text-gray-500 pt-6">Start the conversation with a question about NASA, missions, or spacecraft.</div>
                     )}
                     {messages.map(m => {
-                        const bubbleBase = 'relative max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow';
+                        const bubbleBase = 'relative max-w-[95%] rounded-2xl px-4 py-3 text-sm shadow';
                         const colorClass = m.role === 'user'
                             ? 'bg-indigo-600 text-white'
                             : m.role === 'assistant'
@@ -140,13 +169,12 @@ const Chat: React.FC<ChatProps> = ({ endpoint }) => {
                         return (
                             <div key={m.id} className={m.role === 'user' ? 'flex justify-end' : 'flex justify-start'}>
                                 <div className={bubbleBase + ' ' + colorClass}>
-                                    {/* Content */}
                                     {m.parsedJson ? (
                                         <div className="flex flex-col gap-3">
                                             {!m.jsonOnly && (
                                                 <div className="whitespace-pre-wrap break-words">{m.content}</div>
                                             )}
-                                            <pre className="bg-black/40 rounded-lg p-3 text-xs md:text-[13px] leading-relaxed overflow-auto border border-white/5">
+                                            <pre className="bg-black/40 rounded-lg p-3 text-xs md:text-[13px] leading-relaxed overflow-auto border border-white/5 max-h-96">
                                                 <code>{JSON.stringify(m.parsedJson, null, 2)}</code>
                                             </pre>
                                         </div>
@@ -172,7 +200,7 @@ const Chat: React.FC<ChatProps> = ({ endpoint }) => {
             </main>
             <form
                 onSubmit={e => { e.preventDefault(); sendPrompt(); }}
-                className="sticky bottom-0 w-full px-4 md:px-12 pb-6 bg-gradient-to-t from-surface via-surface/95 to-surface/10 backdrop-blur">
+                className="sticky bottom-0 w-full px-4 md:px-8 lg:px-12 pb-6 bg-gradient-to-t from-surface via-surface/95 to-surface/10 backdrop-blur">
                 <div className="flex flex-col gap-2">
                     <div className="relative">
                         <textarea
